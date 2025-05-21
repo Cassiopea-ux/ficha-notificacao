@@ -47,7 +47,7 @@
     font-weight: bold;
     margin-bottom: 6px;
   
-  width: auto; min-width: 250px;
+  $1width: auto; min-width: 250px;
     padding: 6px;
     margin-bottom: 10px;
     border: 1px solid #ccc;
@@ -55,7 +55,7 @@
     box-sizing: border-box;
   }
   .form-group input[type="checkbox"],
-   {
+  $1 {
   width: 100%;
   padding: 6px;
   margin-bottom: 10px;
@@ -373,9 +373,7 @@
 </div>
 <div class="form-group">
   <label for="pais_estrangeiro">32. País (se residente fora do Brasil)</label>
-<select id="pais_estrangeiro" name="pais_estrangeiro">
-  <option value="">Carregando países...</option>
-</select>
+  <input type="text" id="pais_estrangeiro" name="pais_estrangeiro">
 </div>
 
 <h2>Dados da Pessoa Atendida</h2>
@@ -853,11 +851,9 @@
 </div>
 
 
-
 <div class="form-group" style="text-align: center; margin-top: 40px;">
   <button onclick="window.print()" style="padding: 10px 20px; font-size: 16px; margin-right: 10px;">Imprimir</button>
-  <button onclick="downloadPDF()" style="padding: 10px 20px; font-size: 16px; margin-right: 10px;">Salvar</button>
-  <button onclick="enviarParaIfe(event)" style="padding: 10px 20px; font-size: 16px;">Enviar para Ife</button>
+  <button onclick="downloadPDF()" style="padding: 10px 20px; font-size: 16px;">Salvar</button>
 </div>
 
 <script>
@@ -872,25 +868,6 @@ function downloadPDF() {
     y: 10
   });
 }
-</script>
-<script>
-fetch('https://restcountries.com/v3.1/all')
-  .then(response => response.json())
-  .then(data => {
-    const select = document.getElementById('pais_estrangeiro');
-    select.innerHTML = '<option value="">Selecione</option>';
-    data.sort((a, b) => a.name.common.localeCompare(b.name.common));
-    data.forEach(country => {
-      const option = document.createElement('option');
-      option.value = country.name.common;
-      option.textContent = country.name.common;
-      select.appendChild(option);
-    });
-  })
-  .catch(() => {
-    const select = document.getElementById('pais_estrangeiro');
-    select.innerHTML = '<option value="">Erro ao carregar países</option>';
-  });
 </script>
 <script>
 document.getElementById('uf').addEventListener('change', function () {
@@ -970,30 +947,32 @@ document.getElementById('uf_ocorrencia').addEventListener('change', function () 
     });
 });
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<footer style="text-align: center; margin-top: 40px; font-size: 12px; color: #666;">
+  Powered by Getbots®
 <script>
-function enviarParaIfe(event) {
-  event.preventDefault();
-  const form = document.forms[0];
-  Hyperflow.initFlow("XtxJYESAU", {
-    "name": form.nome_vitima.value,
-    "sexo": form.sexo_vitima.value,
-    "idade": form.idade.value,
-    "data_atendimento": form.data_notificacao.value,
-    "unidade": form.nome_unidade.value,
-    "tipo_violencia": form.tipo_violencia.value,
-    "relacao_agressor": form.vinculo_autor.value,
-    "encaminhamentos": Array.from(form.querySelectorAll('input[name=encaminhamento]:checked')).map(e => e.value).join(', '),
-    "assinatura": form.nome_notificador.value
-}
-</script>
-<script>
-function preencherCodigoIBGE(value) {
+function preencherMunicipioECodigo(uf) {
   const codigos = {
     AC: '12', AL: '27', AP: '16', AM: '13', BA: '29', CE: '23', DF: '53', ES: '32',
     GO: '52', MA: '21', MT: '51', MS: '50', MG: '31', PA: '15', PB: '25', PR: '41',
     PE: '26', PI: '22', RJ: '33', RN: '24', RS: '43', RO: '11', RR: '14', SC: '42',
     SP: '35', SE: '28', TO: '17'
   };
-  document.getElementById('codigo_ibge').value = codigos[value] || '';
+
+  document.getElementById('cod_ibge_ocorrencia').value = codigos[uf] || '';
 }
+  const codigos = {
+    AC: '12', AL: '27', AP: '16', AM: '13', BA: '29', CE: '23', DF: '53', ES: '32',
+    GO: '52', MA: '21', MT: '51', MS: '50', MG: '31', PA: '15', PB: '25', PR: '41',
+    PE: '26', PI: '22', RJ: '33', RN: '24', RS: '43', RO: '11', RR: '14', SC: '42',
+    SP: '35', SE: '28', TO: '17'
+  };
+
+  function preencherCodigoIBGE(uf) {
+    document.getElementById('codigo_ibge').value = codigos[uf] || '';
+  }
 </script>
+</footer>
+
+<!-- O botão e script permanecem os mesmos -->
